@@ -8,6 +8,7 @@ const notificationSlice = createSlice({
     setNotification(state, action) {
       return action.payload
     },
+    // eslint-disable-next-line no-unused-vars
     clearNotification(state, action) {
       return ''
     }
@@ -25,5 +26,3 @@ export const setNotificationWithTimeout = (message, timeout) => {
     }, timeout * 1000)
   }
 }
-
-

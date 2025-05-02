@@ -9,7 +9,7 @@
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "start": "npm run build && json-server -p3001 --watch db.json --static ./dist"
+    "start": "npm run build && json-server db.json --static ./dist"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.7.0",

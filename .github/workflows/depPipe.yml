@@ -1,0 +1,48 @@
+name: Deployment Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+env:
+  CONDITION: ${{contains(join(github.event.commits.*.message, ' '), '#skip')}}
+
+jobs:
+  deployment_pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check style
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Trigger deployment
+        if: ${{ github.event_name == 'push' && env.CONDITION == 'false' }}
+        run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
+
+      #notifications would go here but have been omitted as not to clutter the discord server or set up my own
+  tag_release:
+    needs: [deployment_pipeline]
+    if: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bump version and push tag
+        if: ${{ github.event_name == 'push' && env.CONDITION == 'false' }}
+        uses: anothrNick/github-tag-action@1.64.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
