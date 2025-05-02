@@ -26,5 +26,3 @@ export const setNotificationWithTimeout = (message, timeout) => {
     }, timeout * 1000)
   }
 }
-
-//cheeky comment
